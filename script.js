@@ -7,8 +7,10 @@ async function improvePrompt() {
     document.getElementById("result");
 
     if (!input.trim()) {
+
         result.innerHTML =
-        "Please enter a prompt.";
+        "⚠️ Please enter a prompt.";
+
         return;
     }
 
@@ -34,20 +36,26 @@ async function improvePrompt() {
                 body: JSON.stringify({
 
                     model:
-                    "deepseek/deepseek-chat-v3-0324:free",
+                    "meta-llama/llama-3.3-8b-instruct:free",
 
                     messages: [
 
                         {
                             role: "system",
-                            content:
-                            `You are PromptPilot AI.
+                            content: `
+You are PromptPilot AI.
 
-Your job is to transform simple user requests into detailed professional prompts.
+Your job is to transform weak prompts into powerful professional prompts.
 
-Return ONLY the improved prompt.
-
-Do not explain anything.`
+Rules:
+- Return ONLY the improved prompt.
+- Make it detailed.
+- Add structure.
+- Add context.
+- Add desired output format.
+- Add expert role instructions.
+- Do not explain your work.
+`
                         },
 
                         {
@@ -65,6 +73,18 @@ Do not explain anything.`
         const data =
         await response.json();
 
+        console.log(data);
+
+        if (!response.ok) {
+
+            result.innerHTML =
+            "❌ " +
+            (data.error?.message ||
+            "Request failed");
+
+            return;
+        }
+
         result.innerHTML =
         data.choices[0].message.content;
 
@@ -72,10 +92,10 @@ Do not explain anything.`
 
     catch (error) {
 
-        result.innerHTML =
-        "❌ Error connecting to AI.";
-
         console.error(error);
+
+        result.innerHTML =
+        "❌ " + error.message;
 
     }
 
